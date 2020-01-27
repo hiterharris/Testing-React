@@ -1,26 +1,33 @@
 import React from 'react';
 import {render, fireEvent, wait} from '@testing-library/react';
-import App from '../App';
+import { getData as mockData } from "../api"
+import StarWarsCharacters from '../components/StarWarsCharacters';
 
-test('App renders with StarWarsCharacters', async () => {
-    const {getByText} = render(<App />);
+jest.mock("../api");
 
-    const characters = getByText(/Characters/i);
-    expect(characters).toBeInTheDocument();
+test(' buttons re-render new page', async () => {
+    mockData.mockResolvedValue({results: [{
+        name: "Luke Skywalker",
+        height: "172",
+        mass: "77", 
+        id: Date.now()
 
-    wait(() => expect(getByText(/TestCharacter/i)))
-})
+    }],
+        next: "abcd",
+        previous: "abcd"
+    })
 
-test('buttons update data', () => {
-    const {getByText} = render(<App />);
+    const { getByText } = render(<StarWarsCharacters />)
 
-    const previousButton = getByText(/Previous/i);
+    const nextButton= getByText(/next/i);
+    expect(nextButton).toBeInTheDocument();
+    fireEvent.click(nextButton);
+
+    const previousButton = getByText(/previous/i)
     expect(previousButton).toBeInTheDocument();
     fireEvent.click(previousButton);
 
-    const nextButton = getByText(/Next/i);
-    expect(previousButton).toBeInTheDocument();
-    fireEvent.click(nextButton);
+    expect(mockData).toHaveBeenCalledTimes(1);
 
-    wait(() => expect(getByText(/TestCharacter/i)))
+    wait(() => expect(getByText(/Luke/i).toBeInDocument()))
 })
