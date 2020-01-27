@@ -1,9 +1,6 @@
 import React from 'react';
 import {render, fireEvent, wait} from '@testing-library/react';
 import App from '../App';
-import {getData} from '../api';
-
-// jest.mock('../api');
 
 test('App renders with StarWarsCharacters', async () => {
     const {getByText} = render(<App />);
@@ -24,4 +21,6 @@ test('buttons update data', () => {
     const nextButton = getByText(/Next/i);
     expect(previousButton).toBeInTheDocument();
     fireEvent.click(nextButton);
+
+    wait(() => expect(getByText(/TestCharacter/i)))
 })
