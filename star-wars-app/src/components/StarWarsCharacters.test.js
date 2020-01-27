@@ -1,7 +1,27 @@
 import React from 'react';
-import {render} from '@testing-library/react';
-import StarWarsCharacters from './StarWarsCharacters';
+import {render, fireEvent, wait} from '@testing-library/react';
+import App from '../App';
+import {getData} from '../api';
 
-test('renders StarWarsCharacters', () => {
-    render(<StarWarsCharacters />);
+// jest.mock('../api');
+
+test('App renders with StarWarsCharacters', async () => {
+    const {getByText} = render(<App />);
+
+    const characters = getByText(/Characters/i);
+    expect(characters).toBeInTheDocument();
+
+    wait(() => expect(getByText(/TestCharacter/i)))
+})
+
+test('buttons update data', () => {
+    const {getByText} = render(<App />);
+
+    const previousButton = getByText(/Previous/i);
+    expect(previousButton).toBeInTheDocument();
+    fireEvent.click(previousButton);
+
+    const nextButton = getByText(/Next/i);
+    expect(previousButton).toBeInTheDocument();
+    fireEvent.click(nextButton);
 })
