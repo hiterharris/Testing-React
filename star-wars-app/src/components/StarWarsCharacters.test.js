@@ -5,29 +5,30 @@ import StarWarsCharacters from '../components/StarWarsCharacters';
 
 jest.mock("../api");
 
-test(' buttons re-render new page', async () => {
-    mockData.mockResolvedValue({results: [{
-        name: "Luke Skywalker",
-        height: "172",
-        mass: "77", 
-        id: Date.now()
+test('StarWarsComponent renders buttons and has data', async () => {
 
-    }],
-        next: "abcd",
-        previous: "abcd"
-    })
+    mockData.mockResolvedValue({
+        count: 'mockCount',
+        results: [
+            {
+                name: "mockName",
+                id: Date.now()
+            }
+        ],
+        next: "mockNext",
+        previous: "mockPrevious"
+    });
 
-    const { getByText } = render(<StarWarsCharacters />)
-
+    const { getByText } = render(<StarWarsCharacters />);
     const nextButton= getByText(/next/i);
-    expect(nextButton).toBeInTheDocument();
-    fireEvent.click(nextButton);
+    const previousButton = getByText(/previous/i);
 
-    const previousButton = getByText(/previous/i)
-    expect(previousButton).toBeInTheDocument();
+    fireEvent.click(nextButton);
     fireEvent.click(previousButton);
 
+    expect(nextButton).toBeInTheDocument();
+    expect(previousButton).toBeInTheDocument();
     expect(mockData).toHaveBeenCalledTimes(1);
 
-    wait(() => expect(getByText(/Luke/i).toBeInDocument()))
-})
+    wait(() => expect(getByText(/Characters/i).toBeInDocument()));
+});
